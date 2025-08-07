@@ -1,0 +1,7 @@
+vim.keymap.set('n', 'y', 'u', { noremap = true })
+vim.keymap.set('n', 'u', 'i', { noremap = true })
+vim.keymap.set('n', 'j', 'h', { noremap = true })
+vim.keymap.set('n', 'k', 'j', { noremap = true })
+vim.keymap.set('n', 'i', 'k', { noremap = true })
+vim.keymap.set('n', 'l', 'l', { noremap = true })
+vim.keymap.set('n', 'h', 'y', { noremap = true })
