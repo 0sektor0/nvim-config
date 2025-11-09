@@ -1,4 +1,4 @@
---@brief
+---@brief
 ---
 --- https://github.com/luals/lua-language-server
 ---
