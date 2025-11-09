@@ -7,6 +7,7 @@ return {
           defaults = {
             file_ignore_patterns = {
               ".meta",
+              ".git/*",
             },
           },
         })
