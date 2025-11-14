@@ -62,12 +62,15 @@ return {
                     settings = {
                         ["rust_analyzer"] = {
                             diagnostics = {
-                                enable = false
+                                enable = true,
                             }
                         }
                     }
                 }
             )
+
+            vim.lsp.enable("rust_analyzer")
+            vim.lsp.enable("lua_ls")
         end
     }
 }
