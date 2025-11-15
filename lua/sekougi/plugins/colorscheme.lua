@@ -1,6 +1,6 @@
 return {
     "WIttyJudge/gruvbox-material.nvim",
-    config = function ()
+    config = function()
         require('gruvbox-material').setup()
     end
 }

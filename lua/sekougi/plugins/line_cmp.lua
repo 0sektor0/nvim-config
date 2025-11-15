@@ -12,7 +12,7 @@ return {
             {
                 -- Installed sources:
                 sources = {
-                    {name = "path"}, -- file paths
+                    { name = "path" }, -- file paths
                 },
                 window = {
                     completion = cmp.config.window.bordered(),
@@ -28,7 +28,7 @@ return {
                 mapping = cmp.mapping.preset.cmdline(),
                 sources = cmp.config.sources(
                     {
-                        {name = "cmdline"}
+                        { name = "cmdline" }
                     }
                 )
             }
@@ -36,14 +36,13 @@ return {
 
         -- Дополнение при поиске (/ и ?)
         cmp.setup.cmdline(
-            {"/", "?"},
+            { "/", "?" },
             {
                 mapping = cmp.mapping.preset.cmdline(),
                 sources = {
-                    {name = "buffer"}
+                    { name = "buffer" }
                 }
             }
         )
     end
 }
-
