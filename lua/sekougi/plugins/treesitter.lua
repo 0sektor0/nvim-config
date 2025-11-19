@@ -14,7 +14,7 @@ return {
                 "vim",
                 "vimdoc",
                 "markdown",
-                "markdown_inline"
+                "markdown_inline",
                 "query",
                 "c",
                 "rust",
