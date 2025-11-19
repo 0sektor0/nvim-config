@@ -7,8 +7,8 @@ return {
         "MunifTanjim/nui.nvim",
     },
     config = function()
-        vim.keymap.set("n", "<leader>tb", "<cmd>Neotree show focus buffers right<cr>",{ desc = "Neotree toggle show buffers right" })
-        vim.keymap.set("n", "<leader>tg", "<cmd>Neotree float git_status<cr>",{ desc = "Neotree float git status" })
-        vim.keymap.set("n", "<leader>tt", "<cmd>Neotree show focus filesystem left<cr>",{ desc = "Neotree toggle" })
+        vim.keymap.set("n", "<leader>tb", "<cmd>Neotree show focus buffers right<cr>", { desc = "Neotree show buffers right" })
+        vim.keymap.set("n", "<leader>tt", "<cmd>Neotree show focus filesystem left<cr>", { desc = "Neotree show filesystem" })
+        vim.keymap.set("n", "<leader>tg", "<cmd>Neotree float git_status<cr>", { desc = "Neotree git status" })
     end
 }
