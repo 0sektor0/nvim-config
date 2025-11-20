@@ -20,21 +20,24 @@ return {
             },
             layouts = {
                 {
-                    elements = {
-                        { id = "scopes", size = 0.25 },
-                        "breakpoints",
-                        "stacks",
-                        "watches",
-                    },
-                    size = 40,
+                    elements = { {
+                        id = "scopes",
+                        size = 0.4
+                    }, {
+                        id = "stacks",
+                        size = 0.4
+                    }, {
+                        id = "breakpoints",
+                        size = 0.2
+                    } },
+                    size = 60,
                     position = "left",
                 },
                 {
                     elements = {
-                        "repl",
                         "console",
                     },
-                    size = 0.25,
+                    size = 15,
                     position = "bottom",
                 },
             },
@@ -60,5 +63,8 @@ return {
         end
 
         vim.keymap.set("n", "<leader>du", dapui.toggle, { desc = "Debug: Toggle UI" })
+
+        vim.fn.sign_define('DapBreakpoint', { text = '🟥', texthl = '', linehl = '', numhl = '' })
+        vim.fn.sign_define('DapStopped', { text = '▶️', texthl = '', linehl = '', numhl = '' })
     end,
 }
