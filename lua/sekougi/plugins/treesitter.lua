@@ -7,6 +7,25 @@ return {
         "windwp/nvim-ts-autotag",
     },
     config = function()
-        require('nvim-treesitter').install({ 'lua', 'vim', 'rust', 'c', 'toml', 'vimdoc', 'c_sharp' }):wait(300000)
+        local configs = require("nvim-treesitter.configs")
+        configs.setup({
+            -- Список языков, которые будут автоматически установлены
+            ensure_installed = {
+                "lua",
+                "vim",
+                "rust",
+                "c",
+                "toml",
+                "vimdoc",
+                "c_sharp"
+            },
+            -- Автоматическая установка парсера при открытии файла, если он не установлен
+            auto_install = true,
+            -- Подсветка синтаксиса
+            highlight = {
+                enable = true,
+                additional_vim_regex_highlighting = false,
+            },
+        })
     end,
 }
