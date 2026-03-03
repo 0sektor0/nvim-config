@@ -15,6 +15,27 @@ function config_rust()
     vim.lsp.enable("rust_analyzer")
 end
 
+function config_roslyn_ls()
+    vim.lsp.enable("roslyn_ls")
+end
+
+function config_roslyn()
+    vim.lsp.config("roslyn", {
+        on_attach = function()
+            print("This will run when the server attaches!")
+        end,
+        settings = {
+            ["csharp|inlay_hints"] = {
+                csharp_enable_inlay_hints_for_implicit_object_creation = true,
+                csharp_enable_inlay_hints_for_implicit_variable_types = true,
+            },
+            ["csharp|code_lens"] = {
+                dotnet_enable_references_code_lens = true,
+            },
+        },
+    })
+end
+
 function config_lua()
     vim.lsp.config(
         "lua_ls",
@@ -83,6 +104,8 @@ return {
     },
     config = function()
         config_lua()
+        --config_roslyn()
+        config_roslyn_ls()
         config_rust()
         config_keymap()
     end
