@@ -1,10 +1,17 @@
 return {
     "mason-org/mason.nvim",
-    opts = {},
-    ensure_installed = {
-        "lua-language-server",
-        "rust-anayzer",
-        "codelldb",
+    dependencies = {
+        {
+            "WhoIsSethDaniel/mason-tool-installer.nvim",
+            opts = {
+                ensure_installed = {
+                    "lua-language-server",
+                    "rust-analyzer",
+                    "codelldb",
+                    "roslyn-language-server",
+                },
+            },
+        },
     },
     config = function()
         require("mason").setup({
@@ -13,5 +20,5 @@ return {
                 "github:Crashdummyy/mason-registry",
             },
         })
-    end
+    end,
 }

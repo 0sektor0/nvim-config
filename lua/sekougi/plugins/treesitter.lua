@@ -1,6 +1,5 @@
 return {
     "nvim-treesitter/nvim-treesitter",
-    lazy = false,
     event = { "BufReadPre", "BufNewFile" },
     build = ":TSUpdate",
     dependencies = {
@@ -27,5 +26,7 @@ return {
                 additional_vim_regex_highlighting = false,
             },
         })
+
+        require("nvim-ts-autotag").setup()
     end,
 }

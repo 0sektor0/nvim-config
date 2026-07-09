@@ -26,7 +26,7 @@ local function get_rust_binary()
     return vim.fn.input("Path to executable: ", vim.fn.getcwd() .. "/target/debug/", "file")
 end
 
-function config_rust()
+local function config_rust()
     local dap = require("dap")
 
     dap.adapters.codelldb = {
@@ -102,7 +102,7 @@ function config_rust()
     }
 end
 
-function config_keymap()
+local function config_keymap()
     local dap = require("dap")
 
     vim.keymap.set("n", "<F5>", dap.continue, { desc = "Debug: Continue" })
