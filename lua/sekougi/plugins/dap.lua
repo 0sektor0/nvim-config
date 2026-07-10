@@ -105,7 +105,9 @@ local function config_cs()
                 return require("dap.utils").pick_process({
                     prompt = "Select Unity process: ",
                     filter = function(proc)
-                        return proc.name:lower():find("unity", 1, true) ~= nil
+                        local name = vim.fs.basename(proc.name)
+
+                        return name == "Unity" or name == "Unity.exe"
                     end,
                 })
             end,
