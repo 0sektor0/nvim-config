@@ -101,7 +101,14 @@ local function config_cs()
             type = "coreclr",
             name = "Attach to Unity",
             request = "attach",
-            processId = require("dap.utils").pick_process,
+            processId = function()
+                return require("dap.utils").pick_process({
+                    prompt = "Select Unity process: ",
+                    filter = function(proc)
+                        return proc.name:lower():find("unity", 1, true) ~= nil
+                    end,
+                })
+            end,
         },
     }
 end
