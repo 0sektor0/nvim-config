@@ -1,25 +1,18 @@
-local function get_os()
-    if package.config:sub(1, 1) == '\\' then
-        return "windows"
-    else
-        local homedir = os.getenv("HOME")
-        if homedir then
-            return "unix"
-        else
-            return "unknown"
-        end
-    end
-end
+local is_windows = vim.fn.has("win32") == 1
 
-local function get_codelldb_path()
-    local os_type = get_os()
-    local mason_bin = vim.fn.stdpath("data") .. "/mason/bin"
+local platform = {
+    console = is_windows and "integratedTerminal" or "integratedConsole",
+    dap_detached = not is_windows,
+    exe_suffix = is_windows and ".exe" or "",
+    mason_bin = vim.fn.stdpath("data") .. "/mason/bin",
+}
 
-    if os_type == "windows" then
-        return mason_bin .. "/codelldb.cmd"
-    else
-        return mason_bin .. "/codelldb"
+local function mason_executable(name)
+    if is_windows then
+        return platform.mason_bin .. "/" .. name .. ".cmd"
     end
+
+    return platform.mason_bin .. "/" .. name
 end
 
 local function get_rust_binary()
@@ -33,9 +26,9 @@ local function config_rust()
         type = 'server',
         port = "${port}",
         executable = {
-            command = get_codelldb_path(),
+            command = mason_executable("codelldb"),
             args = { "--port", "${port}" },
-            detached = get_os() == "windows" and false or true
+            detached = platform.dap_detached
         }
     }
 
@@ -50,7 +43,7 @@ local function config_rust()
             args = {},
             env = function()
                 local env_vars = {}
-                -- Копируем переменные окружения текущей сессии
+                -- Copy environment variables from the current session
                 for k, v in pairs(vim.fn.environ()) do
                     env_vars[k] = v
                 end
@@ -58,7 +51,7 @@ local function config_rust()
                 return env_vars
             end,
             terminal = "integrated",
-            console = get_os() == "windows" and "integratedTerminal" or "integratedConsole",
+            console = platform.console,
             sourceLanguages = { "rust" },
         },
         {
@@ -72,33 +65,44 @@ local function config_rust()
                 local args_string = vim.fn.input('Arguments: ')
                 return vim.split(args_string, " ")
             end,
-            console = get_os() == "windows" and "integratedTerminal" or "integratedConsole",
+            console = platform.console,
         },
         {
             name = "Debug test",
             type = "codelldb",
             request = "launch",
             program = function()
-                local os_type = get_os()
-                local path_separator = os_type == "windows" and "\\" or "/"
-                local binary_extension = os_type == "windows" and ".exe" or ""
-
-                -- Для тестов используем cargo test для определения бинарника
+                -- For tests, use cargo test to determine the binary
                 local test_name = vim.fn.input('Test name (optional): ')
                 if test_name ~= "" then
-                    return vim.fn.getcwd() ..
-                        path_separator ..
-                        "target" ..
-                        path_separator ..
-                        "debug" .. path_separator .. "deps" .. path_separator .. test_name .. binary_extension
+                    return vim.fs.joinpath(vim.fn.getcwd(), "target", "debug", "deps", test_name .. platform.exe_suffix)
                 else
                     return get_rust_binary()
                 end
             end,
             cwd = '${workspaceFolder}',
             args = {},
-            console = get_os() == "windows" and "integratedTerminal" or "integratedConsole",
+            console = platform.console,
         }
+    }
+end
+
+local function config_cs()
+    local dap = require("dap")
+
+    dap.adapters.coreclr = {
+        type = "executable",
+        command = mason_executable("netcoredbg"),
+        args = { "--interpreter=vscode" },
+    }
+
+    dap.configurations.cs = {
+        {
+            type = "coreclr",
+            name = "Attach to Unity",
+            request = "attach",
+            processId = require("dap.utils").pick_process,
+        },
     }
 end
 
@@ -122,6 +126,7 @@ return {
     "mfussenegger/nvim-dap",
     config = function()
         config_rust()
+        config_cs()
         config_keymap()
     end,
 }

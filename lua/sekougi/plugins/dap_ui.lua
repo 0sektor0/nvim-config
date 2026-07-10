@@ -51,7 +51,7 @@ return {
             },
         })
 
-        -- Автоматическое открытие/закрытие UI при отладке
+        -- Automatically open/close the UI while debugging
         dap.listeners.after.event_initialized["dapui_config"] = function()
             dapui.open()
         end

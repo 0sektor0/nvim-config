@@ -10,6 +10,8 @@ return {
                     "codelldb",
                     "roslyn-language-server",
                     "roslyn",
+                    "omnisharp",
+                    "netcoredbg",
                 },
             },
         },

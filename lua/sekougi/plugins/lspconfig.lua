@@ -19,6 +19,15 @@ local function config_roslyn()
     vim.lsp.enable("roslyn_ls")
 end
 
+local function config_omnisharp()
+    vim.lsp.config("omnisharp", {
+        handlers = {
+            ["textDocument/definition"] = require("omnisharp_extended").handler,
+        },
+    })
+
+    vim.lsp.enable("omnisharp")
+end
 
 local function config_lua()
     vim.lsp.config(
@@ -76,6 +85,7 @@ end
 return {
     "neovim/nvim-lspconfig",
     dependencies = {
+        "Hoffs/omnisharp-extended-lsp.nvim",
         {
             "folke/lazydev.nvim",
             ft = "lua", -- only load on lua files
@@ -89,7 +99,9 @@ return {
     },
     config = function()
         config_lua()
-        config_roslyn()
+        -- Keep Roslyn configured above, but use OmniSharp as the active C# LSP for Unity.
+        -- config_roslyn()
+        config_omnisharp()
         config_rust()
         config_keymap()
     end

@@ -8,7 +8,7 @@ return {
     config = function()
         local configs = require("nvim-treesitter.configs")
         configs.setup({
-            -- Список языков, которые будут автоматически установлены
+            -- Languages that will be installed automatically
             ensure_installed = {
                 "lua",
                 "vim",
@@ -18,9 +18,9 @@ return {
                 "vimdoc",
                 "c_sharp"
             },
-            -- Автоматическая установка парсера при открытии файла, если он не установлен
+            -- Automatically install a parser when opening a file if it is missing
             auto_install = true,
-            -- Подсветка синтаксиса
+            -- Syntax highlighting
             highlight = {
                 enable = true,
                 additional_vim_regex_highlighting = false,
