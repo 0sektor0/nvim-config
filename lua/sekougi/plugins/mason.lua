@@ -9,6 +9,7 @@ return {
                     "rust-analyzer",
                     "codelldb",
                     "roslyn-language-server",
+                    "roslyn",
                 },
             },
         },
