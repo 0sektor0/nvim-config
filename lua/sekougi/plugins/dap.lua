@@ -5,6 +5,7 @@ local platform = {
     dap_detached = not is_windows,
     exe_suffix = is_windows and ".exe" or "",
     mason_bin = vim.fn.stdpath("data") .. "/mason/bin",
+    mason_packages = vim.fn.stdpath("data") .. "/mason/packages",
 }
 
 local function mason_executable(name)
@@ -13,6 +14,14 @@ local function mason_executable(name)
     end
 
     return platform.mason_bin .. "/" .. name
+end
+
+local function netcoredbg_executable()
+    if is_windows then
+        return vim.fs.joinpath(platform.mason_packages, "netcoredbg", "netcoredbg", "netcoredbg.exe")
+    end
+
+    return mason_executable("netcoredbg")
 end
 
 local function get_rust_binary()
@@ -92,7 +101,7 @@ local function config_cs()
 
     dap.adapters.coreclr = {
         type = "executable",
-        command = mason_executable("netcoredbg"),
+        command = netcoredbg_executable(),
         args = { "--interpreter=vscode" },
     }
 
