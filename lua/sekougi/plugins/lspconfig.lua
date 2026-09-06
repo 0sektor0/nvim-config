@@ -29,6 +29,18 @@ local function config_omnisharp()
     vim.lsp.enable("omnisharp")
 end
 
+local function config_gopls()
+    vim.lsp.config("gopls", {
+        settings = {
+            gopls = {
+                semanticTokens = false
+            }
+        }
+    })
+
+    vim.lsp.enable("gopls")
+end
+
 local function config_lua()
     vim.lsp.config(
         "lua_ls",
@@ -103,6 +115,7 @@ return {
         -- config_roslyn()
         config_omnisharp()
         config_rust()
+        config_gopls()
         config_keymap()
     end
 }

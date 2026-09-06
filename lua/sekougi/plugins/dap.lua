@@ -1,7 +1,7 @@
 local is_windows = vim.fn.has("win32") == 1
 
 local platform = {
-    console = is_windows and "integratedTerminal" or "integratedConsole",
+    console = "integratedTerminal",
     dap_detached = not is_windows,
     exe_suffix = is_windows and ".exe" or "",
     mason_bin = vim.fn.stdpath("data") .. "/mason/bin",
@@ -24,8 +24,35 @@ local function netcoredbg_executable()
     return mason_executable("netcoredbg")
 end
 
-local function get_rust_binary()
-    return vim.fn.input("Path to executable: ", vim.fn.getcwd() .. "/target/debug/", "file")
+local function rust_env()
+    local env_vars = {}
+    for k, v in pairs(vim.fn.environ()) do
+        env_vars[k] = v
+    end
+    env_vars.RUST_BACKTRACE = "1"
+    return env_vars
+end
+
+local function rust_binary_path()
+    local project_name = vim.fn.fnamemodify(vim.fn.getcwd(), ":t")
+    return vim.fs.joinpath(vim.fn.getcwd(), "target", "debug", project_name .. platform.exe_suffix)
+end
+
+local function build_rust_sync()
+    vim.notify("[dap] Running cargo build...", vim.log.levels.INFO)
+    local output = vim.fn.system("cargo build 2>&1")
+    if vim.v.shell_error ~= 0 then
+        vim.notify("cargo build failed:\n" .. output, vim.log.levels.ERROR)
+        return false
+    end
+    return true
+end
+
+local function get_rust_binary_built()
+    if build_rust_sync() then
+        return rust_binary_path()
+    end
+    return nil
 end
 
 local function config_rust()
@@ -46,19 +73,11 @@ local function config_rust()
             name = "Debug Rust",
             type = "codelldb",
             request = "launch",
-            program = get_rust_binary,
+            program = get_rust_binary_built,
             cwd = '${workspaceFolder}',
             stopOnEntry = false,
             args = {},
-            env = function()
-                local env_vars = {}
-                -- Copy environment variables from the current session
-                for k, v in pairs(vim.fn.environ()) do
-                    env_vars[k] = v
-                end
-                env_vars.RUST_BACKTRACE = "1"
-                return env_vars
-            end,
+            env = rust_env,
             terminal = "integrated",
             console = platform.console,
             sourceLanguages = { "rust" },
@@ -67,7 +86,7 @@ local function config_rust()
             name = "Debug with args",
             type = "codelldb",
             request = "launch",
-            program = get_rust_binary,
+            program = get_rust_binary_built,
             cwd = '${workspaceFolder}',
             stopOnEntry = false,
             args = function()
@@ -81,12 +100,14 @@ local function config_rust()
             type = "codelldb",
             request = "launch",
             program = function()
-                -- For tests, use cargo test to determine the binary
                 local test_name = vim.fn.input('Test name (optional): ')
+                if not build_rust_sync() then
+                    return nil
+                end
                 if test_name ~= "" then
                     return vim.fs.joinpath(vim.fn.getcwd(), "target", "debug", "deps", test_name .. platform.exe_suffix)
                 else
-                    return get_rust_binary()
+                    return rust_binary_path()
                 end
             end,
             cwd = '${workspaceFolder}',
@@ -141,6 +162,63 @@ local function config_cs()
     }
 end
 
+local function config_go()
+    local dap = require("dap")
+
+    dap.adapters.delve = {
+        type = "server",
+        port = "${port}",
+        executable = {
+            command = mason_executable("dlv"),
+            args = { "dap", "-l", "127.0.0.1:${port}" },
+            detached = platform.dap_detached
+        }
+    }
+
+    dap.configurations.go = {
+        {
+            type = "delve",
+            name = "Debug",
+            request = "launch",
+            program = "${fileDirname}",
+            console = platform.console,
+        },
+        {
+            type = "delve",
+            name = "Debug test",
+            request = "launch",
+            program = "${fileDirname}",
+            args = function()
+                local test_name = vim.fn.input("Test name (optional): ")
+                if test_name ~= "" then
+                    return { "-test.run", test_name }
+                end
+                return {}
+            end,
+            console = platform.console,
+        },
+        {
+            type = "delve",
+            name = "Debug attach",
+            request = "attach",
+            mode = "local",
+            program = "${fileDirname}",
+            console = platform.console,
+        },
+        {
+            type = "delve",
+            name = "Debug with args",
+            request = "launch",
+            program = "${fileDirname}",
+            args = function()
+                local args_string = vim.fn.input("Arguments: ")
+                return vim.split(args_string, " ")
+            end,
+            console = platform.console,
+        },
+    }
+end
+
 local function config_keymap()
     local dap = require("dap")
 
@@ -162,6 +240,7 @@ return {
     config = function()
         config_rust()
         config_cs()
+        config_go()
         config_keymap()
     end,
 }

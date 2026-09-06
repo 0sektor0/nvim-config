@@ -1,32 +1,27 @@
 return {
-    "nvim-treesitter/nvim-treesitter",
-    event = { "BufReadPre", "BufNewFile" },
-    build = ":TSUpdate",
-    dependencies = {
-        "windwp/nvim-ts-autotag",
-    },
+    'nvim-treesitter/nvim-treesitter',
+    lazy = false,
+    build = ':TSUpdate',
     config = function()
-        local configs = require("nvim-treesitter.configs")
-        configs.setup({
-            -- Languages that will be installed automatically
-            ensure_installed = {
-                "lua",
-                "vim",
-                "rust",
-                "c",
-                "toml",
-                "vimdoc",
-                "c_sharp"
-            },
-            -- Automatically install a parser when opening a file if it is missing
-            auto_install = true,
-            -- Syntax highlighting
-            highlight = {
-                enable = true,
-                additional_vim_regex_highlighting = false,
-            },
-        })
+        local parsers = {
+            'go',
+            'rust',
+            'c',
+            'c_sharp',
+            'lua',
+            'vim',
+            'vimdoc',
+            'toml',
+            'markdown',
+            'markdown_inline',
+            'query'
+        }
+        require('nvim-treesitter').install(parsers):wait(300000)
 
-        require("nvim-ts-autotag").setup()
-    end,
+        vim.api.nvim_create_autocmd('FileType', {
+            callback = function(args)
+                pcall(vim.treesitter.start, args.buf)
+            end,
+        })
+    end
 }
