@@ -162,7 +162,7 @@ local function config_cs()
     }
 end
 
-local function config_go()
+ local function config_go()
     local dap = require("dap")
 
     dap.adapters.delve = {

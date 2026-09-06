@@ -33,7 +33,7 @@ local function config_gopls()
     vim.lsp.config("gopls", {
         settings = {
             gopls = {
-                semanticTokens = false
+                semanticTokens = true
             }
         }
     })

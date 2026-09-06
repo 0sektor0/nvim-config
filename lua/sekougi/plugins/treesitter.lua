@@ -17,11 +17,5 @@ return {
             'query'
         }
         require('nvim-treesitter').install(parsers):wait(300000)
-
-        vim.api.nvim_create_autocmd('FileType', {
-            callback = function(args)
-                pcall(vim.treesitter.start, args.buf)
-            end,
-        })
     end
 }
